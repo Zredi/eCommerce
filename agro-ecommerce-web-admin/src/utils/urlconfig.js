@@ -1,0 +1,33 @@
+export const URL = {
+    signupUrl : `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/auth/create`,
+    signInUrl : `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/auth/login`,
+    profileUrl : `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/auth`,
+    userUrl : `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/users`,
+    storeUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/api/v1/stores`,
+    productUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/products`,
+    imageUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/images`,
+    cartUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/carts`,
+    cartItemUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/cart-items`,
+    manufacturerUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/api/v1/manufacturers`,
+    unitUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/api/v1/units`,
+    subUnitUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/api/v1/subUnits`,
+    inventoryUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/inventories`,
+    stockUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/stocks`,
+    categoryUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/categories`,
+    subCategoryUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/subcategories`,
+    orderUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/orders`,
+    invoiceUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/invoices`,
+    notificationUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/notifications`,
+    returnUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/returns`,
+    shoppingBagUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/api/v1/shoppingBags`,
+    userShoppingBagUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/api/v1/userShoppingBags`,
+    addressUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/address`,
+    userAddressUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/api/v1/userAddressMaps`,
+    mailMessageUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/api/v1/sendMailMessage`,
+    whatsAppMsgUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/api/v1/sendWpMessage`,
+    DashboardUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/api/v1/dashboard`,
+    bucketUrl: `${import.meta.env.VITE_MOVER_ENDPOINT_URL}/buckets`,
+    salesUrl: `${import.meta.env.VITE_ECOMMERCE_API_ENDPOINT}/offline-sales`
+     
+     
+}
