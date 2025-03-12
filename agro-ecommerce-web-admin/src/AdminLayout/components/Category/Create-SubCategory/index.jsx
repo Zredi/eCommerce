@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { createCategory, fetchCategories, setSelectedCategory, updateCategory } from '../../../../features/CategoryReducer';
 import { createSubCategory, fetchSubCategoryById, setSelectedSubCategory, updateSubCategory } from '../../../../features/SubCategoryReducer';
+import { showSuccessSnackbar } from '../../../../utils/snackbar';
 
 function AddSubCategoryForm() {
   
@@ -45,10 +46,12 @@ function AddSubCategoryForm() {
     try {
       if (isEditing) {
         await dispatch(updateSubCategory({ categoryId: categoryId ,subCategoryId: id, subCategoryData: { name } })).unwrap();
-        alert("SubCategory updated successfully");
+        // alert("SubCategory updated successfully");
+        showSuccessSnackbar(dispatch, "SubCategory updated successfully");
       } else {
         await dispatch(createSubCategory({ categoryId, subCategoryData: { name } })).unwrap();
-        alert("SubCategory added successfully !");
+        // alert("SubCategory added successfully !");
+        showSuccessSnackbar(dispatch, "SubCategory added successfully");
       }
 
       navigate("/admin/category?tab=1");
@@ -66,7 +69,7 @@ function AddSubCategoryForm() {
       className="max-w-md mx-auto mt-5 p-6 bg-white border rounded-lg shadow-lg"
       onSubmit={handleSubmit}
     >
-      <h2 className="text-2xl font-bold mb-6">{isEditing ? 'Edit SubCategory' : 'Add New SubCategory'}</h2>
+      <h2 className="text-3xl font-extrabold bg-gradient-to-r from-[#5A9A7A] to-[#2DD4BF] bg-clip-text text-transparent mb-6">{isEditing ? 'Edit SubCategory' : 'Add New SubCategory'}</h2>
 
       <div className="mb-4">
         <label className="block text-gray-700 font-bold mb-2" htmlFor="category">

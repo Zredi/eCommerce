@@ -25,6 +25,8 @@ function Sales() {
   const { inventories, loading: inventoryLoading, error: inventoryError } = useSelector((state) => state.inventory);
   const {currentInvoice} = useSelector((state)=> state.invoice);
 
+  console.log('current invoice', currentInvoice);
+  
   useEffect(() => {
     dispatch(fetchAllSales());
     dispatch(fetchAllInventories());
@@ -73,22 +75,27 @@ function Sales() {
 
   const handleViewSale = (sale) => {
     // Handle view sale details
-    console.log('View sale:', sale);
+    navigate('/admin/view-sale', { state: { sale } });
   };
 
   const handleDownloadInvoice = async (saleId) => {
     try {
       const sale = sales.find(s => s.id === saleId);
       
-      await dispatch(fetchInvoiceBySaleId(saleId)).unwrap();
+      const invoice = await dispatch(fetchInvoiceBySaleId(saleId)).unwrap();
+      
+      if (!invoice) {
+        throw new Error("Invoice not yet available");
+      }
+      
       const doc = new jsPDF();
 
         doc.setFontSize(20);
         doc.text('INVOICE', 105, 15, { align: 'center' });
 
         doc.setFontSize(12);
-        doc.text(`Invoice No: ${currentInvoice?.invoiceNumber}`, 15, 30);
-        doc.text(`Date: ${new Date(currentInvoice?.invoiceDate).toLocaleDateString()}`, 15, 40);
+        doc.text(`Invoice No: ${invoice.invoiceNumber}`, 15, 30);
+        doc.text(`Date: ${new Date(invoice.invoiceDate).toLocaleDateString()}`, 15, 40);
 
         doc.setFontSize(14);
         doc.text('Customer Information:', 15, 55);
@@ -120,12 +127,14 @@ function Sales() {
 
         const finalY = doc.previousAutoTable.finalY || 150;
         doc.setFontSize(14);
-        doc.text(`Total Amount: ₹${sale.totalAmount}`, 15, finalY + 20);
+        doc.text(`GST: ${sale.gstPercentage}%`, 15, finalY + 10);
+        doc.text(`Total Amount: ₹${sale.finalAmount}`, 15, finalY + 20);
 
-        doc.save(`${currentInvoice?.invoiceNumber}.pdf`);
+        doc.save(`${invoice.invoiceNumber}.pdf`);
       
       
     } catch (error) {
+        alert("failed to generate invoice.")
       console.error('Error downloading invoice:', error);
     }
   };
@@ -189,7 +198,7 @@ function Sales() {
                     </Tooltip>
                     <button
                         onClick={activeTab === 0 ? handleAddSaleRecord : handleAddPurchaseRecord}
-                        className="bg-gradient-to-r from-[#5A9A7A] to-[#2DD4BF] text-white px-6 py-2 rounded-lg shadow-md hover:from-[#2DD4BF] hover:to-[#5A9A7A] transform hover:scale-105 transition-all duration-200"
+                        className="bg-gradient-to-r from-[#5A9A7A] to-[#2DD4BF] text-white px-6 py-2 rounded-lg shadow-md hover:from-[#2DD4BF] hover:to-[#5A9A7A] transform cursor-pointer hover:scale-105 transition-all duration-200"
                     >
                         {activeTab === 0 ? '+ Add Sale' : '+ Add Purchase'}
                     </button>
@@ -278,10 +287,10 @@ function Sales() {
                 <div ref={printRef}>
                     <div className="overflow-x-auto">
                         <table className="w-full">
-                            <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+                            <thead className="bg-gray-200">
                                 <tr>
                                     {activeTab === 0
-                                        ? ['SL', 'Date', 'Products', 'Total Amount', 'Payment Method', 'Customer', 'Actions'].map(header => (
+                                        ? ['SL', 'Date', 'Products', 'Total Amount','GST','Final Amount', 'Payment Method', 'Customer', 'Actions'].map(header => (
                                             <th key={header} className="p-4 text-left text-sm font-semibold text-gray-700 tracking-wide">
                                                 {header}
                                             </th>
@@ -297,7 +306,7 @@ function Sales() {
                                 {filteredTableData?.length > 0 ? filteredTableData.map((item, index) => (
                                     <tr 
                                         key={item.id} 
-                                        className="hover:bg-gray-50 transition-all duration-200 transform hover:-translate-y-0.5"
+                                        className="hover:bg-gray-100 transition-all duration-200 transform"
                                     >
                                         <td className="p-4 text-gray-600">{index + 1}</td>
                                         {activeTab === 0 ? (
@@ -310,7 +319,9 @@ function Sales() {
                                                         </div>
                                                     ))}
                                                 </td>
-                                                <td className="p-4 font-medium text-gray-800">₹{item.totalAmount}</td>
+                                                <td className="p-4 font-medium text-gray-800">₹ {item.totalAmount}</td>
+                                                <td className="p-4 font-medium text-gray-800">{item.gstPercentage}%</td>
+                                                <td className="p-4 font-medium text-gray-800">₹ {item.finalAmount}</td>
                                                 <td className="p-4">
                                                     <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
                                                         {item.paymentMethod}

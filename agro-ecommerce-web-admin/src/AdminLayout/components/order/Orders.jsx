@@ -149,12 +149,12 @@ function Order() {
 
     const handleViewOrder = (order) => {
         dispatch(setSelectedOrder(order));
-        navigate('/view-order');
+        navigate('/admin/view-order');
     }
 
     const handleViewReturn = (returnItem) => {
         dispatch(setSelectedOrder(returnItem));
-        navigate('/view-order');
+        navigate('/admin/view-order');
     }
 
     const handleTabChange = (event, newValue) => {
@@ -271,7 +271,7 @@ function Order() {
                                         <td className="p-4">
                                             <Tooltip title="View">
                                                 <IconButton onClick={() => handleViewOrder(order)} className="hover:bg-purple-100">
-                                                    <FaEye className="text-purple-600" />
+                                                    <FaEye className="text-blue-600" />
                                                 </IconButton>
                                             </Tooltip>
                                         </td>

@@ -176,6 +176,11 @@ export default function AdminLayout() {
     setProfileAnchorEl(null);
   };
 
+  const handleProfileClick=()=>{
+    setProfileAnchorEl(null);
+    navigate("/admin/profile");
+  }
+
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
@@ -198,7 +203,7 @@ export default function AdminLayout() {
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       
-      <MenuItem onClick={handleProfileMenuClose} sx={{ py: 2 }}>
+      <MenuItem onClick={handleProfileClick} sx={{ py: 2 }}>
         <MdAccountCircle className="mr-2" size={20} />
         <Typography>My Profile</Typography>
       </MenuItem>
@@ -334,7 +339,7 @@ export default function AdminLayout() {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-              {!isTablet && 'Agro Ecommerce'}
+              {!isTablet && 'Ecommerce'}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {!isMobile && (

@@ -23,8 +23,12 @@ import CreateStaff from './AdminLayout/components/staff/CreateStaff';
 import Sales from './AdminLayout/components/sales/Sales';
 import PurchaseForm from './AdminLayout/components/sales/PurchaseForm';
 import SaleForm from './AdminLayout/components/sales/SaleForm';
+import ViewSale from './AdminLayout/components/sales/ViewSale';
+
 
 function App() {
+
+
 
   axios.interceptors.request.use(
     config => {
@@ -59,6 +63,7 @@ function App() {
         <Route path="inventory" element={<Inventory />} />
         <Route path="add-purchase" element={<PurchaseForm />} />
         <Route path="add-sale" element={<SaleForm />} />
+        <Route path="view-sale" element={<ViewSale/>}/>
         <Route path="products" element={<Products />} />
         <Route path="add-product" element={<AddProductForm />} />
         <Route path="view-product" element={<ViewProduct />} />

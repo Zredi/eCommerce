@@ -89,7 +89,8 @@ function PurchaseForm() {
     <form onSubmit={handleFormSubmit} className="max-w-2xl mt-5 mx-auto p-6 bg-white border rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-6">{isEditing ? "Update Record" : "Add Purchase Record"}</h2>
 
-      <div className="mb-4">
+      <div className='mb-4 flex space-x-4'>
+      <div className="flex-1">
         <label className="block text-gray-700 text-sm font-bold mb-2">Product</label>
         <select
           name="productId"
@@ -111,7 +112,7 @@ function PurchaseForm() {
         </select>
       </div>
 
-      <div className="mb-4">
+      <div className="flex-1">
         <label className="block text-gray-700 text-sm font-bold mb-2">Quantity Added</label>
         <input
           type="number"
@@ -122,8 +123,10 @@ function PurchaseForm() {
           min="1"
         />
       </div>
+      </div>
 
-      <div className="mb-4">
+      <div className='mb-4 flex space-x-4'>
+      <div className="flex-1">
         <label className="block text-gray-700 text-sm font-bold mb-2">Unit Price</label>
         <input
           type="number"
@@ -136,7 +139,7 @@ function PurchaseForm() {
         />
       </div>
 
-      <div className="mb-4">
+      <div className="flex-1">
         <label className="block text-gray-700 text-sm font-bold mb-2">Total Price</label>
         <input
           type="number"
@@ -146,6 +149,7 @@ function PurchaseForm() {
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 bg-gray-200 leading-tight focus:outline-none focus:shadow-outline"
           placeholder="Total price will be calculated automatically"
         />
+      </div>
       </div>
 
       <div className="mb-4">
@@ -175,7 +179,7 @@ function PurchaseForm() {
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
       <div className="flex justify-end gap-4">
-        <Link to="/sales"
+        <Link to="/admin/sales"
           className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="button"
         >

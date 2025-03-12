@@ -26,7 +26,7 @@ const ViewProduct = () => {
                 <div className="text-center">
                     <h2 className="text-2xl font-bold text-gray-800">Product not found</h2>
                     <button
-                        onClick={() => navigate('/products')}
+                        onClick={() => navigate('/admin/products')}
                         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                     >
                         Back to Products

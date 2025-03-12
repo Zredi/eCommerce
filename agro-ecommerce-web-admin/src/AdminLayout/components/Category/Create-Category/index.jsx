@@ -60,7 +60,7 @@ function AddCategoryForm() {
                 className="max-w-md mx-auto mt-5 p-6 bg-white border rounded-lg shadow-lg"
                 onSubmit={handleSubmit}
             >
-                <h2 className="text-2xl font-bold mb-6">{isEditing ? 'Edit Category' : 'Add New Category'}</h2>
+                <h2 className="text-3xl font-extrabold bg-gradient-to-r from-[#5A9A7A] to-[#2DD4BF] bg-clip-text text-transparent mb-6">{isEditing ? 'Edit Category' : 'Add New Category'}</h2>
                 <div className="mb-4">
                     <label className="block text-gray-700 font-bold mb-2" for="name">
                         Name:

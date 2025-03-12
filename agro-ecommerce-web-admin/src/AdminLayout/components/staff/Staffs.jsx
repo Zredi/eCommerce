@@ -73,7 +73,7 @@ function Staffs() {
                 </h2>
                 <button
                     onClick={handleCreateUser}
-                    className="bg-gradient-to-r from-[#5A9A7A] to-[#2DD4BF] text-white px-6 py-2 rounded-lg shadow-md hover:from-[#2DD4BF] hover:to-[#5A9A7A] transform hover:scale-105 transition-all duration-200"
+                    className="bg-gradient-to-r from-[#5A9A7A] to-[#2DD4BF] text-white px-6 py-2 rounded-lg shadow-md hover:from-[#2DD4BF] hover:to-[#5A9A7A] transform cursor-pointer hover:scale-105 transition-all duration-200"
                 >
                     + Add Staff
                 </button>

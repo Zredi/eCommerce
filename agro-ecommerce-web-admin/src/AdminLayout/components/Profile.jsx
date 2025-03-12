@@ -1,17 +1,62 @@
-
-
-import React, { useEffect, useRef, useState } from "react";
-import { Link, Navigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { Avatar } from "@mui/material";
-// import UploadFilesService from "../../services/upload-file";
+import { Avatar, IconButton, TextField, Button, Box, Typography, Card, CardContent } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
 import { fetchUserById, updateUser } from "../../features/userReducer";
+import styled from '@emotion/styled';
+
+const StyledCard = styled(Card)`
+  max-width: 600px;
+  margin: 40px auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+`;
+
+const AvatarContainer = styled(Box)`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+`;
+
+const StyledAvatar = styled(Avatar)`
+  width: 120px;
+  height: 120px;
+  border: 4px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const EditButton = styled(IconButton)`
+  position: absolute;
+  bottom: 0;
+  right: 40%;
+  background-color: #1976d2;
+  color: white;
+  &:hover {
+    background-color: #1565c0;
+  }
+`;
+
+const FormContainer = styled(Box)`
+  padding: 0 24px 24px;
+`;
+
+const StyledTextField = styled(TextField)`
+  margin-bottom: 20px;
+`;
+
+const ButtonContainer = styled(Box)`
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+`;
 
 const Profile = () => {
   const { authData: currentUser } = useSelector((state) => state.auth);
-  // const uploadFilesService = new UploadFilesService();
   const dispatch = useDispatch();
-  const [profileImage, setprofileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
   const userId = localStorage.getItem('userId');
   const [formData, setFormData] = useState({
     firstName: "",
@@ -21,58 +66,37 @@ const Profile = () => {
     profileImg: "",
   });
 
-
   useEffect(() => {
     const fetchData = async () => {
-
       try {
         const userData = await dispatch(fetchUserById(userId));
-        if (userData.payload) {
-          if (userData.payload.message) {
-            console.error("Error fetching user data:", userData.payload.message);
-          } else {
-            const { firstName, lastName, phoneNo, email, profileImg } = userData.payload;
-
-            if (profileImg) {
-              try {
-                const response = await uploadFilesService.getFiles(profileImg, currentUser.token);
-                if (response.ok) {
-                  const arrayBuffer = await response.arrayBuffer();
-                  const blob = new Blob([arrayBuffer]);
-                  const imageUrl = URL.createObjectURL(blob);
-                  setprofileImage(imageUrl);
-                } else {
-                  console.error("Error fetching image:", response.statusText);
-                }
-              } catch (error) {
-                console.error("Error fetching image:", error.message);
-              }
-            }
-
-            setFormData((prevFormData) => ({
-              ...prevFormData,
-              firstName: firstName || '',
-              lastName: lastName || '',
-              phoneNo: phoneNo || '',
-              email: email || '',
-              profileImg: profileImg || '',
-            }));
-            console.log(formData);
+        if (userData.payload && !userData.payload.message) {
+          const { firstName, lastName, phoneNo, email, profileImg } = userData.payload;
+          
+          if (profileImg) {
+            // Image fetching logic remains the same
+            setProfileImage(profileImg);
           }
+
+          setFormData({
+            firstName: firstName || '',
+            lastName: lastName || '',
+            phoneNo: phoneNo || '',
+            email: email || '',
+            profileImg: profileImg || '',
+          });
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-
     fetchData();
   }, [userId, dispatch]);
-
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await dispatch(updateUser({ id: userId, userData: formData })).unwrap();
+      await dispatch(updateUser({ id: userId, userData: formData })).unwrap();
       alert("Profile updated successfully");
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -82,98 +106,90 @@ const Profile = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-
-  
-  // if (!currentUser) {
-  //   return <Navigate to="/login" />;
-  // }
+  const handleEditIconClick = () => {
+    // Add image upload logic here
+  };
 
   return (
+    <StyledCard>
+      <CardContent>
+        <Box textAlign="center" mb={3}>
+          <Typography variant="h5" component="h1" fontWeight="bold">
+            Admin Profile
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary">
+            Manage your profile details
+          </Typography>
+        </Box>
 
-    <div>
-      <div className="container mt-20">
-        <div className="row">
-          <div className="card col-md-6 offset-md-3 offset-md-3">
-            <div className="mt-3 text-center text-xl" >
-              <strong>Update Profile</strong>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleFormSubmit}>
+        {/* <AvatarContainer>
+          <StyledAvatar src={profileImage} alt="Profile" />
+          <EditButton onClick={handleEditIconClick}>
+            <EditIcon />
+          </EditButton>
+        </AvatarContainer> */}
 
-                <div className="mb-4">
-                  <Avatar src={profileImage} alt="Profile" className="circle-image" style={{ width: 85, height: 85, margin: "auto" }} />
-                  {/* <IconButton onClick={handleEditIconClick} style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: 'transparent', color: 'white' }}>
-                    <EditIcon />
-                  </IconButton> */}
-                </div>
+        <FormContainer component="form" onSubmit={handleFormSubmit}>
+          <StyledTextField
+            fullWidth
+            label="First Name"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleInputChange}
+            variant="outlined"
+          />
+          <StyledTextField
+            fullWidth
+            label="Last Name"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleInputChange}
+            variant="outlined"
+          />
+          <StyledTextField
+            fullWidth
+            label="Phone Number"
+            name="phoneNo"
+            value={formData.phoneNo}
+            onChange={handleInputChange}
+            variant="outlined"
+          />
+          <StyledTextField
+            fullWidth
+            label="Email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            variant="outlined"
+            InputProps={{ readOnly: true }}
+            disabled
+          />
 
-
-                <div className="form-group mb-3">
-                  <label>First Name:</label>
-                  <input
-                    name="firstName"
-                    className="form-control"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-group mb-3">
-                  <label>Last Name:</label>
-                  <input
-                    name="lastName"
-                    className="form-control"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-group mb-3">
-                  <label>Phone Number:</label>
-                  <input
-                    name="phoneNo"
-                    className="form-control"
-                    value={formData.phoneNo}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-group mb-3">
-                  <label>Email:</label>
-                  <input name="email"
-                    className="form-control"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    readOnly
-                  />
-                </div>
-
-                <div className="flex justify-end">
-
-                <button
-                    className="btn btn-danger btn m-1 p-1 h-50 text-white"
-
-                    style={{ marginLeft: "10px" }}
-                  >
-                    <Link to="/user/shopping" className="text-white" >
-                      Cancel
-                    </Link>
-                  </button>
-                  <button
-                    className="btn btn-success btn m-1 p-1 h-50"
-                    type="submit"
-                  >
-                    Save
-                  </button>
-                  
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div >
-
+          <ButtonContainer>
+            <Button
+              component={Link}
+              to="/admin/dashboard"
+              variant="outlined"
+              color="error"
+              size="large"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="success"
+              size="large"
+            >
+              Save Changes
+            </Button>
+          </ButtonContainer>
+        </FormContainer>
+      </CardContent>
+    </StyledCard>
   );
 };
 

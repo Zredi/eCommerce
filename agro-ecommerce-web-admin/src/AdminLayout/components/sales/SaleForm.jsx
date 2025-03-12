@@ -126,7 +126,7 @@ function SaleForm() {
       });
       setError(''); 
     } catch (err) {
-      setError('Failed to check product stock');
+      setError('Failed to check product stock availability');
     }
   };
 
@@ -187,7 +187,7 @@ function SaleForm() {
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto">
       <form onSubmit={handleSubmit} className="bg-white border rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-bold mb-6">Create New Sale</h2>
+        <h2 className="text-3xl font-extrabold bg-gradient-to-r from-[#5A9A7A] to-[#2DD4BF] bg-clip-text text-transparent mb-6">Create New Sale</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div>

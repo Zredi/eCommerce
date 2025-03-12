@@ -29,7 +29,7 @@ function ProductsTable() {
 
     const handleViewProduct = (product) => {
         dispatch(setSelectedProduct(product));
-        navigate(`/view-product`);
+        navigate(`/admin/view-product`);
     }
 
     if (loading) {
