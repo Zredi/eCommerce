@@ -26,7 +26,8 @@ export const URL = {
     mailMessageUrl: `${process.env.REACT_APP_ECOMMERCE_API_ENDPOINT}/api/v1/sendMailMessage`,
     whatsAppMsgUrl: `${process.env.REACT_APP_ECOMMERCE_API_ENDPOINT}/api/v1/sendWpMessage`,
     DashboardUrl: `${process.env.REACT_APP_ECOMMERCE_API_ENDPOINT}/api/v1/dashboard`,
-    bucketUrl: `${process.env.REACT_APP_MOVER_ENDPOINT_URL}/buckets`
+    bucketUrl: `${process.env.REACT_APP_MOVER_ENDPOINT_URL}/buckets`,
+    wishlistUrl: `${process.env.REACT_APP_ECOMMERCE_API_ENDPOINT}/wishlist`,
      
      
      

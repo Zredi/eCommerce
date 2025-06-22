@@ -16,9 +16,6 @@ export const fetchUserCart = createAsyncThunk("cart/fetchUserCart", async (userI
 
 export const clearCart = createAsyncThunk("cart/clearCart", async (cartId, { rejectWithValue }) => {
   try {
-    console.log("clearing cart");
-    console.log('cartId', cartId);
-    
     
     await axios.delete(`${URL.cartUrl}/${cartId}/clear`);
     console.log("cart cleared");
@@ -64,6 +61,8 @@ export const updateItemQuantity = createAsyncThunk(
     }
   }
 );
+
+
 
 // Initial state
 const initialState = {

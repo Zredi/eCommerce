@@ -1,119 +1,169 @@
-import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import { json } from 'react-router-dom';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 import { URL } from '../utils/urlconfig';
 
+// Async thunks
+export const fetchAddresses = createAsyncThunk(
+    "address/fetchAddresses",
+    async (userId, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`${URL.addressUrl}/${userId}/addresses`);
+            console.log("addresses", response);
+          
+            return response.data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const fetchAddressById = createAsyncThunk(
+    "address/fetchAddressById",
+    async (addressId, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`${URL.addressUrl}/${addressId}/address`);
+            return response.data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const addNewAddress = createAsyncThunk(
+    "address/addNewAddress",
+    async ({ userId, address }, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(`${URL.addressUrl}/add/${userId}`, address);
+
+            return response.data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const deleteAddress = createAsyncThunk(
+    "address/deleteAddress",
+    async (addressId, { rejectWithValue }) => {
+        try {
+            const response = await axios.delete(`${URL.addressUrl}/${addressId}`);
+            return addressId;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const updateAddress = createAsyncThunk(
+    "address/updateAddress",
+    async ({ addressId, address }, { rejectWithValue }) => {
+        try {
+            const response = await axios.put(`${URL.addressUrl}/${addressId}`, address);
+            return response.data.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
 const initialState = {
-    address: undefined,
+    addresses: [],
+    selectedAddress: null,
     loading: false,
-    error: '',
-    addresss: []
-}
+    error: null,
+};
 
-const makeApiCall = async (api,  token="")=>{
-    const res = await fetch(api, {
-        method:"GET",
-        headers:{
-            "Content-Type":"application/json",
-            "Authorization":`Bearer ${token}`,
-        },
-        
-    })
-    return await res.json();
-}
-const makePostApiCall = async (api,body,  token="")=>{
-    console.log(api)
-    const res = await fetch(api, {
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json",
-            "Authorization":`Bearer ${token}`,
-        },
-        body:JSON.stringify(body)
-        
-    })
-    return await res.json();
-}
-
-export const addresss = createAsyncThunk(
-    'addresss',
-    async ({token})=>{
-        const result = await makeApiCall(`${URL.addressUrl}`, token);
-        return result;
-    }
-)
-
-export const addressByName = createAsyncThunk(
-    'addressByName',
-    async ({addressName, token})=>{
-        const result = await makePostApiCall(`${URL.addressUrl}/${addressName}`,null, token);
-        return result;
-    }
-)
-
-export const addressById = createAsyncThunk(
-    'addressById',
-    async ({id, token})=>{
-        const result = await makeApiCall(`${URL.addressUrl}/${id}`, token);
-        return result;
-    }
-)
-export const addressToSaveApi = createAsyncThunk(
-    'addressToSave',
-    async({address, token}) => {
-        const result = await makePostApiCall(`${URL.addressUrl}`,address,token);
-        return result;
-    }
-)
-
-export const addressSlice = createSlice({
-    name:"address",
+const addressSlice = createSlice({
+    name: "address",
     initialState,
-    reducers:{
-        
+    reducers: {
+        selectAddress: (state, action) => {
+            state.selectedAddress = action.payload;
+        },
     },
     extraReducers: (builder) => {
-        builder
-            .addCase(addressToSaveApi.fulfilled, (state, action) => {
-                state.loading = false;
-                if (action.payload) {
-                    state.address = action.payload;
-                }
-            })
-            .addCase(addressById.fulfilled, (state, action) => {
-                state.loading = false;
-                if (action.payload) {
-                    state.address = action.payload;
-                } else {
-                    state.address = undefined;
-                }
-            })
-            .addCase(addressByName.fulfilled, (state, action) => {
-                state.loading = false;
-                if (action.payload.message) {
-                    state.error = action.payload.message;
-                    state.address = undefined;
-                } else if (action.payload.id) {
-                    state.address = action.payload;
-                    state.error = '';
-                }
-            })
-            .addCase(addresss.fulfilled, (state, action) => {
-                state.loading = false;
-                if (action.payload.message) {
-                    state.error = action.payload.message;
-                    state.addresss = undefined;
-                } else if (action.payload) {
-                    state.addresss = action.payload;
-                    state.error = '';
-                }
-            })
-            .addCase(addresss.pending, (state, action) => {
-                state.loading = true;
-                state.error = '';
-                state.address = undefined;
-            });
-    }
-    
+        // Fetch addresses cases
+        builder.addCase(fetchAddresses.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        });
+        builder.addCase(fetchAddresses.fulfilled, (state, action) => {
+            state.loading = false;
+            state.addresses = action.payload;
+        });
+        builder.addCase(fetchAddresses.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+
+        // Fetch address by ID cases
+        builder.addCase(fetchAddressById.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        });
+        builder.addCase(fetchAddressById.fulfilled, (state, action) => {
+            state.loading = false;
+            state.selectedAddress = action.payload;
+        });
+        builder.addCase(fetchAddressById.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+
+        // Add new address cases
+        builder.addCase(addNewAddress.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        });
+        builder.addCase(addNewAddress.fulfilled, (state, action) => {
+            state.loading = false;
+            state.addresses.push(action.payload);
+            state.selectedAddress = action.payload;
+        });
+        builder.addCase(addNewAddress.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+
+        // Delete address cases
+        builder.addCase(deleteAddress.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        });
+        builder.addCase(deleteAddress.fulfilled, (state, action) => {
+            state.loading = false;
+            state.addresses = state.addresses.filter(
+                (address) => address.id !== action.payload
+            );
+            if (state.selectedAddress?.id === action.payload) {
+                state.selectedAddress = null;
+            }
+        });
+        builder.addCase(deleteAddress.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+
+
+        builder.addCase(updateAddress.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        });
+        builder.addCase(updateAddress.fulfilled, (state, action) => {
+            state.loading = false;
+            const index = state.addresses.findIndex(addr => addr.id === action.payload.id);
+            if (index !== -1) {
+                state.addresses[index] = action.payload;
+            }
+            state.selectedAddress = action.payload;
+        });
+        builder.addCase(updateAddress.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+    },
 });
+
+export const {selectAddress} = addressSlice.actions;
 
 export default addressSlice.reducer;

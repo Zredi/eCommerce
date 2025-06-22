@@ -27,6 +27,8 @@ import bucketReducer from "./bucketReducer";
 import InvoiceReducer from "./InvoiceReducer";
 import NotificationReducer from "./NotificationReducer";
 import ReturnReducer from "./ReturnReducer";
+import SnackbarReducer from "./snackbarReducer";
+import WishlistReducer from "./WishlistReducer";
 
 export const store= configureStore({
     reducer :{
@@ -57,7 +59,9 @@ export const store= configureStore({
         bucket: bucketReducer,
         invoice: InvoiceReducer,
         notification: NotificationReducer,
-        return: ReturnReducer
+        return: ReturnReducer,
+        snackbar: SnackbarReducer,
+        wishlist: WishlistReducer
 
     }
 });

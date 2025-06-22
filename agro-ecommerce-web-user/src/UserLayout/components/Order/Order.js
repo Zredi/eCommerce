@@ -89,7 +89,7 @@ function UserOrder() {
         <Typography variant="h6" className="mt-6 text-gray-800">
           You don't have any orders!
         </Typography>
-        <Button variant="contained" onClick={() => navigate('/user/shopping')} className="mt-5" sx={{
+        <Button variant="contained" onClick={() => navigate('/home')} className="mt-5" sx={{
           backgroundColor: "#3498DB",
           "&:hover": { backgroundColor: "#2980B9" }
         }}>Continue Shopping</Button>
@@ -111,7 +111,7 @@ function UserOrder() {
         const returnStatusLabel = getReturnStatusLabel(returnStatus);
         return (
           <div className="container mt-10 px-32">
-            <div className="card border mb-3 cursor-pointer" key={order.id} onClick={() => navigate(`/user/${userId}/orders/${order.id}`)}>
+            <div className="card border mb-3 cursor-pointer" key={order.id} onClick={() => navigate(`/${userId}/orders/${order.id}`)}>
               <div className="card-header d-flex justify-content-between">
                 <span>Order Date: {formatDate(order.orderDate)}</span>
                 <span>Order ID: #{order.id}</span>

@@ -105,7 +105,7 @@ function Checkout() {
             dispatch(clearCart(cartId));
 
             setTimeout(() => {
-                navigate('/user/orders', { replace: true });
+                navigate('/orders', { replace: true });
             }, 3000);
         } catch (error) {
             setOrderError(error.message || "Failed to place order. Please try again.");

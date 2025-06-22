@@ -11,15 +11,15 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { FaCartShopping } from 'react-icons/fa6';
-import { IoCart, IoHome, IoNotifications } from "react-icons/io5";
+import { FaCartShopping, FaUser } from 'react-icons/fa6';
+import { IoCart, IoHeart, IoHome, IoLogOut, IoNotifications } from "react-icons/io5";
 import { MdAccountCircle } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserCart } from '../features/cartReducer';
 import { logout, validateToken } from '../features/authReducer';
 import { deleteNotification, fetchNotifications, markNotificationAsRead } from '../features/NotificationReducer';
-import { Divider, InputAdornment, TextField } from '@mui/material';
-import { DeleteOutlined, Search } from '@mui/icons-material';
+import { Divider, InputAdornment, TextField, Tooltip } from '@mui/material';
+import { DeleteOutlined, Logout, Person, Person2, Person3, PersonOutline, Search } from '@mui/icons-material';
 import Footer from './Footer';
 import { useState, useEffect } from 'react';
 import Login from './Login';
@@ -27,6 +27,8 @@ import Register from './Register';
 import { fetchProducts } from '../features/ProductReducer';
 import { SearchIcon } from 'lucide-react';
 import { isTokenExpired } from '../utils/jwtUtils';
+import CustomSnackbar from './common/Snackbar';
+import { fetchWishlist } from '../features/WishlistReducer';
 
 const BASE_URL = process.env.REACT_APP_ECOMMERCE_API_ENDPOINT.replace('/api/v1', '');
 
@@ -35,7 +37,7 @@ export default function UserLayout() {
   const dispatch = useDispatch();
 
   const { authData, loading, error } = useSelector((state) => state.auth);
-  const isLoggedIn = !!authData?.token;
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
   const userId = authData?.userId;
   const { cart } = useSelector((state) => state.cart);
   const { notifications, unreadCount } = useSelector((state) => state.notification);
@@ -60,6 +62,7 @@ export default function UserLayout() {
 
   // const userId = localStorage.getItem("userId");
 
+  console.log('authData', authData);
 
   const handleLogout = React.useCallback(() => {
     dispatch(logout());
@@ -68,9 +71,9 @@ export default function UserLayout() {
     setMobileMoreAnchorEl(null);
   }, [dispatch, navigate]);
 
-  
+
   useEffect(() => {
-    dispatch(validateToken()); 
+    dispatch(validateToken());
   }, [dispatch]);
 
 
@@ -78,9 +81,10 @@ export default function UserLayout() {
     if (isLoggedIn && userId && authData?.token && !isTokenExpired(authData.token)) {
       dispatch(fetchUserCart(userId));
       dispatch(fetchNotifications(userId));
+      dispatch(fetchWishlist(userId));
       dispatch(fetchProducts());
     }
-    
+
   }, [dispatch, isLoggedIn, userId, authData?.token]);
 
 
@@ -133,7 +137,7 @@ export default function UserLayout() {
   };
 
   const handleProfileClick = () => {
-    navigate("/profile");
+    navigate("/account");
     setAnchorEl(null);
     handleMobileMenuClose();
   }
@@ -144,7 +148,7 @@ export default function UserLayout() {
     handleMobileMenuClose();
   }
 
-  
+
 
   const handleNotificationClick = (event) => {
     setNotificationAnchorEl(event.currentTarget);
@@ -272,6 +276,7 @@ export default function UserLayout() {
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
+      sx={{ mt: 5 }}
       anchorEl={anchorEl}
       anchorOrigin={{
         vertical: 'top',
@@ -286,9 +291,10 @@ export default function UserLayout() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleProfileClick}>My Profile</MenuItem>
-      <MenuItem onClick={handleOrderClick}>My Orders</MenuItem>
-      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+
+      <MenuItem onClick={handleProfileClick}><PersonOutline /> &nbsp; My Account</MenuItem>
+      {/* <MenuItem onClick={handleOrderClick}>My Orders</MenuItem> */}
+      <MenuItem onClick={handleLogout}><Logout /> &nbsp; Logout</MenuItem>
     </Menu>
   );
 
@@ -365,7 +371,8 @@ export default function UserLayout() {
             variant="h6"
             noWrap
             component="div"
-            sx={{ mr: 2, display: { sm: 'block', xs: 'none' } }}
+            sx={{ mr: 2, cursor: 'pointer', display: { sm: 'block', xs: 'none' } }}
+            onClick={() => navigate('/home')}
           >
             Ecommerce
           </Typography>
@@ -459,19 +466,30 @@ export default function UserLayout() {
 
             {isLoggedIn && !isTokenExpired(authData?.token) ? (
               <>
+                <Tooltip title="Cart">
+                  <IconButton onClick={handleCartIconClick} size="large" color="inherit">
+                    <Badge badgeContent={cartItemsCount} color="error">
+                      <IoCart />
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Wishlist">
                 <IconButton onClick={handleCartIconClick} size="large" color="inherit">
-                  <Badge badgeContent={cartItemsCount} color="error">
-                    <IoCart />
+                  <Badge badgeContent={5} color="error">
+                    <IoHeart />
                   </Badge>
                 </IconButton>
+                </Tooltip>
+                <Tooltip title="Notifications">
                 <IconButton
                   onClick={handleNotificationClick}
                   color="inherit"
                 >
                   <Badge badgeContent={unreadCount} color="error">
-                    <IoNotifications />
+                    <IoNotifications size={26} />
                   </Badge>
                 </IconButton>
+                </Tooltip>
                 <IconButton
                   size="large"
                   edge="end"
@@ -521,6 +539,7 @@ export default function UserLayout() {
       )}
 
       <Box component="main" sx={{ flexGrow: 1 }}>
+        <CustomSnackbar />
         <Outlet context={authProps} />
       </Box>
       <Footer />

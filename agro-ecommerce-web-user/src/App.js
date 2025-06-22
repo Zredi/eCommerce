@@ -7,20 +7,29 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 
 
-import { clearMessage } from "./actions/message";
 import "bootstrap/dist/css/bootstrap.min.css";
 import UserLayout from "./UserLayout/UserLayout";
 import UserOrder from "./UserLayout/components/Order/Order";
 import Shopping from "./UserLayout/components/Shopping/Shopping";
 import ShoppingCart from "./UserLayout/components/ShoppingCart/ShoppingCart";
 import axios from "axios";
-import OrderAddress from "./UserLayout/components/OrderAddress/OrderAddress";
 import ProductList from "./UserLayout/components/Shopping/ProductList";
 import ProductDetails from "./UserLayout/components/Shopping/ProductDetails";
 import Checkout from "./UserLayout/components/Checkout/Checkout";
 import UserOrderDetails from "./UserLayout/components/Order/OrderDetails";
 import Profile from "./UserLayout/Profile";
+import ShippingPolicy from "./UserLayout/CustomerService/ShippingPolicy";
 
+const ProtectedRoute = ({ children }) => {
+  const location = useLocation();
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    return <Navigate to="/home" state={{ from: location }} replace />;
+  }
+
+  return children;
+};
 
 const App = () => {
 
@@ -56,15 +65,18 @@ const App = () => {
 
       <Route path="/" element={<UserLayout />}>
         <Route index element={<Shopping />} />
-        <Route path={`orders`} element={<UserOrder />} />
-        <Route path={`:userId/orders/:orderId`} element={<UserOrderDetails />} />
-        <Route path={`address`} element={<OrderAddress />} />
+        <Route path={`orders`} element={<ProtectedRoute><UserOrder /></ProtectedRoute>} />
+        <Route path={`:userId/orders/:orderId`} element={<ProtectedRoute><UserOrderDetails /></ProtectedRoute>} />
+        {/* <Route path={`address`} element={<OrderAddress />} /> */}
         {/* <Route path={`home`} element={<Shopping />} /> */}
-        <Route path={`shopping-bag`} element={<ShoppingCart />} />
-        <Route path={`checkout`} element={<Checkout />} />
+        <Route path={`shopping-bag`} element={<ProtectedRoute><ShoppingCart /></ProtectedRoute>} />
+        <Route path={`checkout`} element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
         <Route path={`products/:name`} element={<ProductList />} />
         <Route path={`product-details/:id`} element={<ProductDetails />} />
-        <Route path={`profile`} element={<Profile />} />
+        <Route path={`account`} element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+
+
+        <Route path="shipping-policy" element={<ShippingPolicy/>}/>
       </Route>
 
     </Routes>

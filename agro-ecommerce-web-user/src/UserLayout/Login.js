@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { signinApi } from "../features/authReducer";
 import * as Yup from 'yup';
+import { showErrorSnackbar, showSuccessSnackbar } from "../utils/snackbar";
 
 const Login = ({ onRegisterClick, initialEmail="" }) => {
   let navigate = useNavigate();
@@ -41,25 +42,26 @@ const Login = ({ onRegisterClick, initialEmail="" }) => {
     dispatch(signinApi({ email: formData.email, password: formData.password }))
       .then((data) => {
         if (data.payload === undefined) {
-          setApiError("Invalid email or password!")
+          showErrorSnackbar(dispatch,"Invalid email or password!");
         } else {
           if (data.payload.role === "ROLE_USER") {
             localStorage.setItem("isLoggedIn", true);
+            showSuccessSnackbar(dispatch, "Login successful!")
             navigate("/home");
           } else {
-            setApiError("Email password mismatch");
+            showErrorSnackbar(dispatch,"Email password mismatch!");
           }
         }
       })
       .catch((e) => {
-        setApiError("Invalid email or password!");
+        showErrorSnackbar(dispatch,"Invalid email or password!");
         setLoading(false);
       });
   };
 
-  if (isLoggedIn) {
-    return <Navigate to="/profile" />;
-  }
+  // if (isLoggedIn) {
+  //   return <Navigate to="/profile" />;
+  // }
 
   return (
     <div className="w-[400px] px-8 py-6 bg-white rounded-xl shadow-lg">

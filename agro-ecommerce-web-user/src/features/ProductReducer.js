@@ -118,6 +118,9 @@ const productSlice = createSlice({
       state.error = null;
       state.reviews = [];
     },
+    resetReviews: (state) => {
+      state.reviews = [];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -207,5 +210,5 @@ const productSlice = createSlice({
   }
 });
 
-export const { resetProducts, setSelectedProduct } = productSlice.actions;
+export const { resetProducts, setSelectedProduct, resetReviews } = productSlice.actions;
 export default productSlice.reducer;

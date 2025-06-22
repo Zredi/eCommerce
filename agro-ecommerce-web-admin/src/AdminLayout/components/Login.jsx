@@ -122,7 +122,7 @@ const Login = () => {
             <div className="w-full mt-4">
               <button 
                 type="submit"
-                className="py-2 px-8 bg-green-500 hover:bg-green-600 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg cursor-pointer select-none"
+                className="py-2 px-8 bg-gradient-to-r from-[#5A9A7A] to-[#2DD4BF] hover:from-[#2DD4BF] hover:to-[#5A9A7A] text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none rounded-lg cursor-pointer select-none"
               >
                 Login
               </button>

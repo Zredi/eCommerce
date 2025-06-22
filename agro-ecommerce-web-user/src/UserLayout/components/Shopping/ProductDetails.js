@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addItemToCart, clearCart, fetchUserCart } from '../../../features/cartReducer';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchProductById, submitReview, fetchProductReviews } from '../../../features/ProductReducer';
+import { fetchProductById, submitReview, fetchProductReviews, resetReviews } from '../../../features/ProductReducer';
 import { fetchStockByProductId, resetStock } from '../../../features/StockReducer';
 
 const BASE_URL = process.env.REACT_APP_ECOMMERCE_API_ENDPOINT.replace('/api/v1', '');
@@ -23,6 +23,7 @@ function ProductDetails() {
 
     useEffect(() => {
         dispatch(resetStock());
+        dispatch(resetReviews());
         dispatch(fetchProductById(id));
         dispatch(fetchProductReviews(id));
         dispatch(fetchStockByProductId(id));
@@ -67,7 +68,7 @@ function ProductDetails() {
         };
 
         console.log('review', review);
-        
+
 
         try {
             await dispatch(submitReview({ productId: id, review })).unwrap();
@@ -120,9 +121,9 @@ function ProductDetails() {
         <div className="mt-20">
             <div className="bg-gray-100">
                 <div className="flex gap-28 container mx-auto px-4 py-8">
-                    {/* Enhanced Image Slider */}
+
                     <div className="relative w-2/5 ml-10">
-                        <div className="overflow-hidden bg-white rounded-lg shadow-lg border border-gray-200">
+                        <div className="overflow-hidden bg-white rounded-lg shadow-md border border-gray-200">
                             {images.length > 0 ? (
                                 <img
                                     src={`${BASE_URL}${images[currentIndex]?.downloadUrl}`}
@@ -130,7 +131,7 @@ function ProductDetails() {
                                     className="w-full h-96 object-contain transition-opacity duration-300 ease-in-out"
                                     onError={(e) => {
                                         console.error('Image failed to load:', e.target.src);
-                                        e.target.src = '/path/to/default-image.jpg'; // Replace with your fallback image path
+                                        e.target.src = '/path/to/default-image.jpg';
                                     }}
                                 />
                             ) : (
@@ -139,12 +140,13 @@ function ProductDetails() {
                                 </div>
                             )}
                         </div>
-                        {/* Navigation Arrows */}
+                        {/* Navigation Row (Just Below Image) */}
                         {images.length > 1 && (
-                            <>
+                            <div className="flex justify-between items-center px-4 py-2 border-t border-gray-200">
+                                {/* Left Arrow */}
                                 <button
                                     onClick={handlePrev}
-                                    className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-gray-800 p-2 rounded-full shadow-md hover:bg-gray-100 focus:outline-none z-10 transition-all duration-200"
+                                    className="bg-white text-gray-800 p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none transition-all duration-200"
                                     style={{ width: '40px', height: '40px' }}
                                     aria-label="Previous Image"
                                 >
@@ -162,9 +164,20 @@ function ProductDetails() {
                                         />
                                     </svg>
                                 </button>
+                                {/* Thumbnail Dots */}
+                                <div className="flex space-x-2">
+                                    {images.map((_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => setCurrentIndex(index)}
+                                            className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-indigo-600' : 'bg-gray-300'} focus:outline-none`}
+                                        />
+                                    ))}
+                                </div>
+                                {/* Right Arrow */}
                                 <button
                                     onClick={handleNext}
-                                    className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-gray-800 p-2 rounded-full shadow-md hover:bg-gray-100 focus:outline-none z-10 transition-all duration-200"
+                                    className="bg-white text-gray-800 p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none transition-all duration-200"
                                     style={{ width: '40px', height: '40px' }}
                                     aria-label="Next Image"
                                 >
@@ -182,18 +195,6 @@ function ProductDetails() {
                                         />
                                     </svg>
                                 </button>
-                            </>
-                        )}
-                        {/* Thumbnail Navigation (Optional) */}
-                        {images.length > 1 && (
-                            <div className="flex justify-center mt-4 space-x-2">
-                                {images.map((_, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => setCurrentIndex(index)}
-                                        className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-indigo-600' : 'bg-gray-300'} focus:outline-none`}
-                                    />
-                                ))}
                             </div>
                         )}
                     </div>
@@ -235,33 +236,36 @@ function ProductDetails() {
                         {/* Reviews Section */}
                         <div className="mt-8">
                             <h3 className="text-xl font-semibold mb-4 text-gray-900">Customer Reviews</h3>
-                            <form onSubmit={handleReviewSubmit} className="mb-6">
-                                <div className="mb-4">
-                                    <label className="block mb-2 font-medium text-gray-700">Your Rating:</label>
-                                    <StarRating 
-                                        rating={rating}
-                                        setRating={setRating}
-                                        hoverRating={hoverRating}
-                                        setHoverRating={setHoverRating}
-                                    />
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block mb-2 font-medium text-gray-700">Your Review:</label>
-                                    <textarea
-                                        value={reviewText}
-                                        onChange={(e) => setReviewText(e.target.value)}
-                                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                        rows="4"
-                                        placeholder="Write your review here..."
-                                    />
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
-                                >
-                                    Submit Review
-                                </button>
-                            </form>
+
+                            {userId &&
+                                <form onSubmit={handleReviewSubmit} className="mb-6">
+                                    <div className="mb-4">
+                                        <label className="block mb-2 font-medium text-gray-700">Your Rating:</label>
+                                        <StarRating
+                                            rating={rating}
+                                            setRating={setRating}
+                                            hoverRating={hoverRating}
+                                            setHoverRating={setHoverRating}
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block mb-2 font-medium text-gray-700">Your Review:</label>
+                                        <textarea
+                                            value={reviewText}
+                                            onChange={(e) => setReviewText(e.target.value)}
+                                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                            rows="4"
+                                            placeholder="Write your review here..."
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+                                    >
+                                        Submit Review
+                                    </button>
+                                </form>
+                            }
 
                             <div className="space-y-6">
                                 {reviews.length === 0 ? (
